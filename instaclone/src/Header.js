@@ -1,19 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { FaHome } from "react-icons/fa";
 import { FaPaperPlane } from "react-icons/fa";
 import { FaPlusSquare } from "react-icons/fa";
 import { FaCompass } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators } from "./redux/modules/user";
+import Permit from "./elements/Permit";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const login_user = useSelector((state) => state.user.user);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const profileClick = () => {
+    setIsOpen((curr) => !curr);
+  };
+  const logoutBtnClick = () => {
+    sessionStorage.removeItem("token");
+    dispatch(actionCreators.logOut());
+  };
+
+  if (login_user === undefined) {
+    return <div></div>;
+  }
   return (
     <Container>
       <div>
         <img src="https://fontmeme.com/images/instagram-new-logo.png"></img>
       </div>
       <div>
-        <input></input>
+        <input placeholder="Search.."></input>
       </div>
       <div>
         <div>
@@ -33,11 +51,26 @@ const Header = () => {
             style={{ width: "27px", height: "27px", marginRight: "12px" }}
           />
         </div>
-        <img src="https://avatars.githubusercontent.com/u/91737252?v=4"></img>
+        <Permit>
+          <img src={login_user?.profileImg} onClick={profileClick}></img>
+        </Permit>
+        {isOpen ? <Togglediv onClick={logoutBtnClick}>Logout</Togglediv> : null}
       </div>
     </Container>
   );
 };
+const Togglediv = styled.div`
+  position: absolute;
+  top: 47px;
+  right: 90px;
+  border: 1px solid #dbdbdb;
+  padding: 5px 10px;
+  border-radius: 3px;
+  width: 100px;
+  height: 20px;
+  font-size: 15px;
+  cursor: pointer;
+`;
 
 const Container = styled.div`
   width: 100%;
@@ -70,6 +103,7 @@ const Container = styled.div`
         width: 30px;
         height: 30px;
         border-radius: 9999px;
+        position: relative;
       }
     }
   }

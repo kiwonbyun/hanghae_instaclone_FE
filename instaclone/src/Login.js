@@ -1,10 +1,31 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { FaFacebookSquare } from "react-icons/fa";
+import user, { actionCreators } from "./redux/modules/user";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const emailRegExp =
+    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+  const emailref = useRef();
+  const passwordref = useRef();
+  const loginBtnClick = () => {
+    const email = emailref.current.value;
+    const password = passwordref.current.value;
+    if (email.match(emailRegExp) === null) {
+      window.alert("이메일 형식을 확인해주세요");
+      return;
+    }
+    if (password.length < 4 || password.length > 16) {
+      window.alert("비밀번호는 4~16자리 입니다.");
+      return;
+    }
+    dispatch(actionCreators.loginDB(email, password));
+  };
+
   return (
     <div style={{ backgroundColor: "#fafafa", height: "100vh" }}>
       <Container>
@@ -15,15 +36,13 @@ const Login = () => {
           <LoginDiv>
             <div>
               <img src="https://fontmeme.com/images/instagram-new-logo.png"></img>
-              <input placeholder="이메일 형식"></input>
-              <input placeholder="비밀번호"></input>
-              <button
-                onClick={() => {
-                  history.push("/home");
-                }}
-              >
-                로그인
-              </button>
+              <input placeholder="이메일 형식" ref={emailref}></input>
+              <input
+                type="password"
+                placeholder="비밀번호"
+                ref={passwordref}
+              ></input>
+              <button onClick={loginBtnClick}>로그인</button>
             </div>
             <div>
               <span>또는</span>

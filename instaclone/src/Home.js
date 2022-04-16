@@ -1,60 +1,121 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Suggest from "./Suggest";
+import Moment from "moment";
+import { useDispatch } from "react-redux";
 import { FaEllipsisH } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa";
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa";
 import { FaRegGrinBeam } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { actionCreators2 } from "./redux/modules/post";
+import SimpleSlider from "./Slider";
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const login_user = useSelector((state) => state.user?.user);
+  const is_login = useSelector((state) => state.user.is_login);
+  const post_list = useSelector((state) => state.post?.list);
+
+  function displayedAt(createdAt) {
+    const milliSeconds = new Date() - createdAt;
+    const seconds = milliSeconds / 1000;
+    if (seconds < 60) return `방금 전`;
+    const minutes = seconds / 60;
+    if (minutes < 60) return `${Math.floor(minutes)}분 전`;
+    const hours = minutes / 60;
+    if (hours < 24) return `${Math.floor(hours)}시간 전`;
+    const days = hours / 24;
+    if (days < 7) return `${Math.floor(days)}일 전`;
+    const weeks = days / 7;
+    if (weeks < 5) return `${Math.floor(weeks)}주 전`;
+    const months = days / 30;
+    if (months < 12) return `${Math.floor(months)}개월 전`;
+    const years = days / 365;
+    return `${Math.floor(years)}년 전`;
+  }
+  const likeClick = (postId) => {
+    console.log("좋아요 클릭");
+    dispatch(actionCreators2.postLikeDB(postId));
+  };
+
+  useEffect(() => {
+    if (is_login) {
+      dispatch(actionCreators2.getAllPostDB(login_user.nickName));
+    } else if (!is_login) {
+      dispatch(actionCreators2.getAllPostDB(null));
+    }
+  }, []);
   return (
     <Container>
       <PostContainer>
-        <Post>
-          <Posttitle>
-            <div>
-              <img src="https://t1.daumcdn.net/cfile/tistory/2513B53E55DB206927"></img>
-              <div>
-                <span>Byunkiwon</span>
-                <small>Seoul, South Korea</small>
-              </div>
-            </div>
-            <FaEllipsisH style={{ width: "40px", height: "18px" }} />
-          </Posttitle>
-          <Postimgdiv>
-            <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FdmPGDZ%2FbtrzvLOGlFd%2FGgk7O1IMUqcvbR4xwOBn9k%2Fimg.jpg"></img>
-          </Postimgdiv>
-          <Icondiv>
-            <div>
-              <FaRegHeart style={{ marginRight: "15px" }} />
-              <FaRegComment style={{ marginRight: "15px" }} />
-              <FaRegPaperPlane />
-            </div>
-            <div>
-              <FaRegBookmark />
-            </div>
-          </Icondiv>
-          <Textdiv>
-            <span>좋아요 1,279개</span>
-            <div>
-              <span>Byunkiwon</span>
-              <p>우리집 강아지의 사진입니다. ㅇㅅㅇ</p>
-            </div>
-            <span>댓글 3개 모두 보기</span>
-            <small>21시간 전</small>
-          </Textdiv>
-          <Inputdiv>
-            <div>
-              <FaRegGrinBeam style={{ height: "20px", width: "20px" }} />
-            </div>
-            <div>
-              <input placeholder="댓글 달기..."></input>
-              <button>게시</button>
-            </div>
-          </Inputdiv>
-        </Post>
+        {post_list?.map((v) => {
+          const startTime = new Date(v.createAt).getTime();
+          const postId = v.postId;
+          return (
+            <Post key={v.postId}>
+              <Posttitle>
+                <div>
+                  <img src={v.profileImg}></img>
+                  <div>
+                    <span>{v.nickName}</span>
+                    <small>Seoul, South Korea</small>
+                  </div>
+                </div>
+                <FaEllipsisH style={{ width: "40px", height: "18px" }} />
+              </Posttitle>
+              <Postimgdiv>
+                <SimpleSlider img_list={v.contentImg} />
+              </Postimgdiv>
+              <Icondiv>
+                <div>
+                  {v.clicked ? (
+                    <FaHeart
+                      style={{ marginRight: "15px", color: "red" }}
+                      onClick={() => {
+                        likeClick(postId);
+                      }}
+                    />
+                  ) : (
+                    <FaRegHeart
+                      style={{ marginRight: "15px" }}
+                      onClick={() => {
+                        likeClick(postId);
+                      }}
+                    />
+                  )}
+
+                  <FaRegComment style={{ marginRight: "15px" }} />
+                  <FaRegPaperPlane />
+                </div>
+                <div>
+                  <FaRegBookmark />
+                </div>
+              </Icondiv>
+              <Textdiv>
+                <span>좋아요 {v.likeCnt}개</span>
+                <div>
+                  <span>{v.nickName}</span>
+                  <p>{v.content}</p>
+                </div>
+                <span>댓글 {v.commentCnt}개 모두 보기</span>
+                <small>{displayedAt(startTime)}</small>
+              </Textdiv>
+              <Inputdiv>
+                <div>
+                  <FaRegGrinBeam style={{ height: "20px", width: "20px" }} />
+                </div>
+                <div>
+                  <input placeholder="댓글 달기..."></input>
+                  <button>게시</button>
+                </div>
+              </Inputdiv>
+            </Post>
+          );
+        })}
       </PostContainer>
       <SuggestContainer>
         <Suggest></Suggest>
@@ -146,6 +207,7 @@ const Post = styled.div`
   flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
+  margin-bottom: 20px;
 `;
 
 const Posttitle = styled.div`
@@ -184,5 +246,6 @@ const Icondiv = styled.div`
   justify-content: space-between;
   font-size: 24px;
   padding: 3px 10px;
+  z-index: 9999;
 `;
 export default Home;

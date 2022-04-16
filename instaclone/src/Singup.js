@@ -1,9 +1,49 @@
-import React from "react";
+import React, { useRef, useState } from "react";
+import { FaFacebookSquare } from "react-icons/fa";
 import styled from "styled-components";
 import { Reset } from "styled-reset";
-import { FaFacebookSquare } from "react-icons/fa";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { actionCreators } from "./redux/modules/user";
 
 const Singup = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const emailRegExp =
+    /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+  const emailref = useRef();
+  const usernameref = useRef();
+  const nicknameref = useRef();
+  const passwordref = useRef();
+  let profileImg;
+  const onImgChange = (e) => {
+    profileImg = e.target.files[0];
+  };
+  const signupBtnClick = () => {
+    const email = emailref.current.value;
+    const username = usernameref.current.value;
+    const nickname = nicknameref.current.value;
+    const password = passwordref.current.value;
+    if (email.match(emailRegExp) === null) {
+      window.alert("이메일 형식을 확인해주세요");
+      return;
+    }
+    if (username.length < 2 || username.length > 7) {
+      window.alert("성명은 최소 2자리입니다.");
+      return;
+    }
+    if (nickname.length < 4 || nickname.length > 10) {
+      window.alert("닉네임은 4~10자리 입니다.");
+      return;
+    }
+    if (password.length < 4 || password.length > 16) {
+      window.alert("비밀번호는 4~16자리 입니다.");
+      return;
+    }
+    dispatch(
+      actionCreators.singUpDB(email, username, nickname, password, profileImg)
+    );
+  };
   return (
     <div style={{ backgroundColor: "#ffffff" }}>
       <Container>
@@ -18,16 +58,27 @@ const Singup = () => {
           </div>
           <div>
             <span>또는</span>
-            <input placeholder="이메일 주소"></input>
-            <input placeholder="성명"></input>
-            <input placeholder="닉네임"></input>
-            <input placeholder="비밀번호"></input>
-            <button>가입</button>
+            <input placeholder="이메일 주소" ref={emailref}></input>
+            <input placeholder="성명" ref={usernameref}></input>
+            <input placeholder="닉네임(4~10자)" ref={nicknameref}></input>
+            <input
+              type="password"
+              placeholder="비밀번호(4~16자)"
+              ref={passwordref}
+            ></input>
+            <input type="file" accept="image/*" onChange={onImgChange}></input>
+            <button onClick={signupBtnClick}>가입</button>
           </div>
         </SignupDiv>
         <Tologindiv>
           <span>계정이 있으신가요?</span>
-          <span>로그인</span>
+          <span
+            onClick={() => {
+              history.push("/login");
+            }}
+          >
+            로그인
+          </span>
         </Tologindiv>
         <TodownloadDiv>
           <div>
@@ -76,6 +127,7 @@ const SignupDiv = styled.div`
       border-top: 1px solid #dbdbdb;
       margin-top: 20px;
       padding: 10px 0px;
+
       span {
         position: relative;
         bottom: 18px;
@@ -89,6 +141,9 @@ const SignupDiv = styled.div`
         border: 1px solid #dbdbdb;
         margin-bottom: 10px;
         border-radius: 4px;
+        &:focus {
+          outline: none;
+        }
       }
       button {
         border: 1px solid #dbdbdb;

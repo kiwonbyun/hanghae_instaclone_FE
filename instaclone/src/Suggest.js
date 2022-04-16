@@ -1,19 +1,24 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
+import Permit from "./elements/Permit";
 
 const Suggest = () => {
+  const login_user = useSelector((state) => state.user.user);
   return (
     <div>
       <Container>
         <LoginUserdiv>
-          <Loginuser>
-            <img src="https://avatars.githubusercontent.com/u/91737252?v=4"></img>
-            <div>
-              <span>Byunkiwon</span>
-              <span>Flow</span>
-            </div>
-            <button>Switch</button>
-          </Loginuser>
+          <Permit>
+            <Loginuser>
+              <img src={login_user?.profileImg}></img>
+              <div>
+                <span>{login_user?.userName}</span>
+                <span>{login_user?.nickName}</span>
+              </div>
+              <button>Switch</button>
+            </Loginuser>
+          </Permit>
         </LoginUserdiv>
         <Textdiv>
           <span>Suggestions For You</span>

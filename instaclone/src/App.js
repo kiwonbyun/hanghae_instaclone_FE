@@ -7,8 +7,19 @@ import Home from "./Home";
 import Header from "./Header";
 import Login from "./Login";
 import Singup from "./Singup";
+import { useDispatch } from "react-redux";
+import { actionCreators } from "./redux/modules/user";
 
 function App() {
+  const dispatch = useDispatch();
+  const is_session = sessionStorage.getItem("token") ? true : false;
+
+  React.useEffect(() => {
+    if (is_session) {
+      dispatch(actionCreators.userCheckDB());
+    }
+  }, []);
+
   return (
     <React.Fragment>
       <ConnectedRouter history={history}>
@@ -22,6 +33,9 @@ function App() {
           <Route path="/home">
             <Header />
             <Home />
+          </Route>
+          <Route path="/login">
+            <Login />
           </Route>
         </Switch>
       </ConnectedRouter>
