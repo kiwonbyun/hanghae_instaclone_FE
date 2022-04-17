@@ -8,8 +8,10 @@ import { FaHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators } from "./redux/modules/user";
 import Permit from "./elements/Permit";
+import { useHistory } from "react-router-dom";
 
 const Header = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const login_user = useSelector((state) => state.user.user);
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +44,15 @@ const Header = () => {
             style={{ width: "27px", height: "27px", marginRight: "12px" }}
           />
           <FaPlusSquare
-            style={{ width: "27px", height: "27px", marginRight: "12px" }}
+            onClick={() => {
+              history.push("/upload");
+            }}
+            style={{
+              width: "27px",
+              height: "27px",
+              marginRight: "12px",
+              cursor: "pointer",
+            }}
           />
           <FaCompass
             style={{ width: "27px", height: "27px", marginRight: "12px" }}
@@ -78,7 +88,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-around;
   position: fixed;
-  z-index: 9999;
+  z-index: 1;
   background-color: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   div {

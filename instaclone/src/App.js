@@ -7,8 +7,10 @@ import Home from "./Home";
 import Header from "./Header";
 import Login from "./Login";
 import Singup from "./Singup";
+import Detail from "./Detail";
 import { useDispatch } from "react-redux";
 import { actionCreators } from "./redux/modules/user";
+import Upload from "./Upload";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +35,12 @@ function App() {
           <Route path="/home">
             <Header />
             <Home />
+          </Route>
+          <Route path="/upload">
+            <Upload />
+          </Route>
+          <Route path="/detail/:id">
+            <Detail />
           </Route>
         </Switch>
       </ConnectedRouter>

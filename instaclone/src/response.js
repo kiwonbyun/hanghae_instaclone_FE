@@ -69,13 +69,14 @@ export const RESP = {
       clicked: false,
     },
   ],
-  POSTPOSTIDGET: {
-    postId: 2,
+  POSTDETAILPOST: {
+    postId: 3,
     contentImg: [
       "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FdmPGDZ%2FbtrzvLOGlFd%2FGgk7O1IMUqcvbR4xwOBn9k%2Fimg.jpg",
       "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/201901/20/28017477-0365-4a43-b546-008b603da621.jpg",
     ],
-    nickName: "detailname",
+    nickName: "Flow",
+    profileImg: "https://avatars.githubusercontent.com/u/91737252?v=4",
     content: "우리강아지들 이쁘죠",
     createAt: "2022-04-12 10:39:20",
     likeCnt: 1923,
@@ -83,7 +84,7 @@ export const RESP = {
   },
   LIKEPOSTIDPOST: {
     status: 200,
-    clicked: true,
+    clicked: false,
   },
   COMMENTPOSTIDPOST: {
     status: 200,
@@ -95,7 +96,7 @@ export const RESP = {
     {
       commentId: 1,
       profileImg: "https://avatars.githubusercontent.com/u/91737252?v=4",
-      nickName: "commentNick",
+      nickName: "악플러",
       comment: "나는 악플러다!!",
     },
     {

@@ -139,6 +139,10 @@ const LoginUserdiv = styled.div``;
 const Container = styled.div`
   width: 60%;
   margin-top: 50px;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  padding-top: 15px;
 `;
 const Loginuser = styled.div`
   display: flex;

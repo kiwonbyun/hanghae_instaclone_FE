@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Suggest from "./Suggest";
-import Moment from "moment";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FaEllipsisH } from "react-icons/fa";
-import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
+import { FaRegHeart } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa";
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa";
@@ -15,9 +14,9 @@ import { useSelector } from "react-redux";
 import { actionCreators } from "./redux/modules/user";
 import { actionCreators2 } from "./redux/modules/post";
 import SimpleSlider from "./Slider";
-import { useInView } from "react-intersection-observer";
-import axiosInstance from "./shared/request";
 import Scroll from "./shared/Scroll";
+import Detail from "./Detail";
+
 const Home = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -118,7 +117,14 @@ const Home = () => {
                       <span>{v.nickName}</span>
                       <p>{v.content}</p>
                     </div>
-                    <span>댓글 {v.commentCnt}개 모두 보기</span>
+                    <span
+                      onClick={() => {
+                        history.push(`/detail/${postId}`);
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
+                      댓글 {v.commentCnt}개 모두 보기
+                    </span>
                     <small>{displayedAt(startTime)}</small>
                   </Textdiv>
                   <Inputdiv>
@@ -246,7 +252,8 @@ const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin-top: 60px;
+  margin-top: 58px;
+  background-color: #fafafa;
 `;
 const SuggestContainer = styled.div`
   width: 45%;
@@ -254,6 +261,7 @@ const SuggestContainer = styled.div`
   position: fixed;
   right: 10px;
   margin-top: 60px;
+  background-color: #fafafa;
 `;
 
 const Post = styled.div`
@@ -262,7 +270,8 @@ const Post = styled.div`
   flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 3px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  background-color: white;
 `;
 
 const Posttitle = styled.div`
@@ -302,6 +311,5 @@ const Icondiv = styled.div`
   justify-content: space-between;
   font-size: 24px;
   padding: 3px 10px;
-  z-index: 9998;
 `;
 export default Home;

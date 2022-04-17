@@ -103,7 +103,7 @@ const Singup = () => {
           <span>계정이 있으신가요?</span>
           <span
             onClick={() => {
-              history.push("/login");
+              history.push("/");
             }}
           >
             로그인

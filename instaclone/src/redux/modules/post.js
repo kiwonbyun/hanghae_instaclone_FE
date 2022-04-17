@@ -4,9 +4,17 @@ import axiosInstance from "../../shared/request";
 import { RESP } from "../../response";
 
 //action
-const GETPOST = "getPost";
+const GETFIRSTPOST = "getFirstPost";
+const GETNEXTPOST = "getNextPost";
 const POSTLIKE = "postLike";
+const DETAILPOSTLIKE = "detailPostLike";
 const LOADING = "loading";
+const POSTPREVIEW = "postPreview";
+
+const UPLOADPOST = "uploadPost";
+const GETDETAILPOST = "getDetailPost";
+const DELETEPOST = "deletePost";
+
 //init
 const initialState = {
   list: [],
@@ -15,12 +23,22 @@ const initialState = {
 };
 
 //action creators
-const getPost = createAction(GETPOST, (post_list, paging) => ({
+const getFirstPost = createAction(GETFIRSTPOST, (post_list, paging) => ({
+  post_list,
+  paging,
+}));
+const getNextPost = createAction(GETNEXTPOST, (post_list, paging) => ({
   post_list,
   paging,
 }));
 const postLike = createAction(POSTLIKE, (post) => ({ post }));
+const detailPostLike = createAction(DETAILPOSTLIKE, (clicked) => ({ clicked }));
 const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
+const postPreview = createAction(POSTPREVIEW, (preview) => ({ preview }));
+const uploadPost = createAction(UPLOADPOST, () => ({}));
+const getDetailPost = createAction(GETDETAILPOST, (post) => ({ post }));
+const deletePost = createAction(DELETEPOST, () => ({}));
+
 //middlewares
 const getFirstPostDB = (nickName) => {
   console.log("난 getFirstPostDB다", nickName);
@@ -36,7 +54,7 @@ const getFirstPostDB = (nickName) => {
         start: 2,
         next: 3,
       };
-      dispatch(getPost(response, paging));
+      dispatch(getFirstPost(response, paging));
     } catch (err) {
       console.log(err);
     }
@@ -59,7 +77,7 @@ const getNextPostDB = (nickName, page) => {
       };
       console.log(paging);
       if (response) {
-        dispatch(getPost(response, paging));
+        dispatch(getNextPost(response, paging));
       }
     } catch (err) {
       console.log(err);
@@ -68,6 +86,7 @@ const getNextPostDB = (nickName, page) => {
 };
 const postLikeDB = (postId) => {
   return async function (dispatch, getState, { history }) {
+    console.log("난 postLikeDB야");
     // const response = await axiosInstance.post(`/api/likes/${postId}`);
     const response = RESP.LIKEPOSTIDPOST;
     if (response.status === 200) {
@@ -80,15 +99,89 @@ const postLikeDB = (postId) => {
     }
   };
 };
+const detailPostLikeDB = (postId) => {
+  return async function (dispatch, getState, { history }) {
+    // const response = await axiosInstance.post(`/api/likes/${postId}`);
+    const response = RESP.LIKEPOSTIDPOST;
+    dispatch(detailPostLike(response.clicked));
+  };
+};
+const uploadPostDB = (contentImg, content) => {
+  return async function (dispatch, getState, { history }) {
+    try {
+      // const response = await axiosInstance.post("/api/post", {
+      //   contentImg,
+      //   content,
+      // });
+      const response = RESP.POSTPOST;
+      if (response.status === 200) {
+        window.alert("게시물이 작성되었습니다.");
+        dispatch(uploadPost());
+        history.replace("/home");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+const getDetailPostDB = (postId) => {
+  return async function (dispatch, getState, { history }) {
+    const user = getState().user.user;
+    console.log(user);
+    try {
+      // const response = await axiosInstance.post("/api/post/detail", {
+      //   postId,
+      //   nickName: user.nickName,
+      // });
+      const response = RESP.POSTDETAILPOST;
+      dispatch(getDetailPost(response));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+const deletePostDB = (postId) => {
+  return async function (dispatch, getState, { history }) {
+    try {
+      // const response = await axiosInstance.delete(`/api/post/${postId}`);
+      const response = RESP.POSTPOSTIDDELETE;
+      if (response.status === 200) {
+        window.alert("게시물이 삭제되었습니다.");
+        history.replace("/home");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
 
 //reducer
 export default handleActions(
   {
-    [GETPOST]: (state, action) =>
+    [GETFIRSTPOST]: (state, action) =>
       produce(state, (draft) => {
-        draft.list.push(...action.payload.post_list);
+        // draft.list.push(...action.payload.post_list);
+        draft.list = action.payload.post_list;
         draft.paging = action.payload.paging;
         draft.is_loading = false;
+      }),
+    [GETNEXTPOST]: (state, action) =>
+      produce(state, (draft) => {
+        draft.list.push(...action.payload.post_list);
+        // draft.list = action.payload.post_list;
+        draft.paging = action.payload.paging;
+        draft.is_loading = false;
+      }),
+    [DETAILPOSTLIKE]: (state, action) =>
+      produce(state, (draft) => {
+        console.log(action.payload.clicked);
+        if (action.payload.clicked) {
+          draft.detailPost.likeCnt += 1;
+          draft.detailPost.clicked = true;
+        } else if (!action.payload.clicked) {
+          draft.detailPost.likeCnt -= 1;
+          draft.detailPost.clicked = false;
+        }
       }),
     [POSTLIKE]: (state, action) =>
       produce(state, (draft) => {
@@ -113,15 +206,33 @@ export default handleActions(
       produce(state, (draft) => {
         draft.is_loading = action.payload.is_loading;
       }),
+    [POSTPREVIEW]: (state, action) =>
+      produce(state, (draft) => {
+        draft.preview = action.payload.preview;
+      }),
+    [UPLOADPOST]: (state, action) =>
+      produce(state, (draft) => {
+        draft.preview = null;
+      }),
+    [GETDETAILPOST]: (state, action) =>
+      produce(state, (draft) => {
+        draft.detailPost = action.payload.post;
+      }),
   },
   initialState
 );
 
 const actionCreators2 = {
-  getPost,
+  getFirstPost,
   getFirstPostDB,
   getNextPostDB,
   postLikeDB,
+  postPreview,
+  uploadPostDB,
+  uploadPost,
+  getDetailPostDB,
+  detailPostLikeDB,
+  deletePostDB,
 };
 
 export { actionCreators2 };
