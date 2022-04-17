@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Suggest from "./Suggest";
 import Moment from "moment";
+import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { FaEllipsisH } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
@@ -11,14 +12,20 @@ import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa";
 import { FaRegGrinBeam } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { actionCreators } from "./redux/modules/user";
 import { actionCreators2 } from "./redux/modules/post";
 import SimpleSlider from "./Slider";
-
+import { useInView } from "react-intersection-observer";
+import axiosInstance from "./shared/request";
+import Scroll from "./shared/Scroll";
 const Home = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const login_user = useSelector((state) => state.user?.user);
-  const is_login = useSelector((state) => state.user.is_login);
+  const is_login = useSelector((state) => state.user?.is_login);
   const post_list = useSelector((state) => state.post?.list);
+  const is_loading = useSelector((state) => state.post?.is_loading);
+  const paging = useSelector((state) => state.post.paging);
 
   function displayedAt(createdAt) {
     const milliSeconds = new Date() - createdAt;
@@ -38,91 +45,137 @@ const Home = () => {
     return `${Math.floor(years)}년 전`;
   }
   const likeClick = (postId) => {
-    console.log("좋아요 클릭");
     dispatch(actionCreators2.postLikeDB(postId));
   };
 
   useEffect(() => {
-    if (is_login) {
-      dispatch(actionCreators2.getAllPostDB(login_user.nickName));
-    } else if (!is_login) {
-      dispatch(actionCreators2.getAllPostDB(null));
+    if (login_user) {
+      dispatch(actionCreators2.getFirstPostDB(login_user?.nickName));
     }
-  }, []);
-  return (
-    <Container>
-      <PostContainer>
-        {post_list?.map((v) => {
-          const startTime = new Date(v.createAt).getTime();
-          const postId = v.postId;
-          return (
-            <Post key={v.postId}>
-              <Posttitle>
-                <div>
-                  <img src={v.profileImg}></img>
-                  <div>
-                    <span>{v.nickName}</span>
-                    <small>Seoul, South Korea</small>
-                  </div>
-                </div>
-                <FaEllipsisH style={{ width: "40px", height: "18px" }} />
-              </Posttitle>
-              <Postimgdiv>
-                <SimpleSlider img_list={v.contentImg} />
-              </Postimgdiv>
-              <Icondiv>
-                <div>
-                  {v.clicked ? (
-                    <FaHeart
-                      style={{ marginRight: "15px", color: "red" }}
-                      onClick={() => {
-                        likeClick(postId);
-                      }}
-                    />
-                  ) : (
-                    <FaRegHeart
-                      style={{ marginRight: "15px" }}
-                      onClick={() => {
-                        likeClick(postId);
-                      }}
-                    />
-                  )}
+  }, [login_user]);
 
-                  <FaRegComment style={{ marginRight: "15px" }} />
-                  <FaRegPaperPlane />
-                </div>
-                <div>
-                  <FaRegBookmark />
-                </div>
-              </Icondiv>
-              <Textdiv>
-                <span>좋아요 {v.likeCnt}개</span>
-                <div>
-                  <span>{v.nickName}</span>
-                  <p>{v.content}</p>
-                </div>
-                <span>댓글 {v.commentCnt}개 모두 보기</span>
-                <small>{displayedAt(startTime)}</small>
-              </Textdiv>
-              <Inputdiv>
-                <div>
-                  <FaRegGrinBeam style={{ height: "20px", width: "20px" }} />
-                </div>
-                <div>
-                  <input placeholder="댓글 달기..."></input>
-                  <button>게시</button>
-                </div>
-              </Inputdiv>
-            </Post>
-          );
-        })}
-      </PostContainer>
-      <SuggestContainer>
-        <Suggest></Suggest>
-      </SuggestContainer>
-    </Container>
-  );
+  if (is_login && paging.start !== null) {
+    console.log(login_user.nickName, paging.start);
+    return (
+      <Container>
+        <PostContainer>
+          <Scroll
+            callNext={() => {
+              dispatch(
+                actionCreators2.getNextPostDB(login_user.nickName, paging.start)
+              );
+              // console.log(login_user?.nickName, paging?.start);
+            }}
+            is_next={paging.next}
+            loading={is_loading}
+          >
+            {post_list?.map((v) => {
+              const startTime = new Date(v.createAt).getTime();
+              const postId = v.postId;
+              return (
+                <Post key={v.postId}>
+                  <Posttitle>
+                    <div>
+                      <img src={v.profileImg}></img>
+                      <div>
+                        <span>{v.nickName}</span>
+                        <small>Seoul, South Korea</small>
+                      </div>
+                    </div>
+                    <FaEllipsisH style={{ width: "40px", height: "18px" }} />
+                  </Posttitle>
+                  <Postimgdiv>
+                    <SimpleSlider img_list={v.contentImg} />
+                  </Postimgdiv>
+                  <Icondiv>
+                    <div>
+                      {v.clicked ? (
+                        <FaHeart
+                          style={{ marginRight: "15px", color: "red" }}
+                          onClick={() => {
+                            likeClick(postId);
+                          }}
+                        />
+                      ) : (
+                        <FaRegHeart
+                          style={{ marginRight: "15px" }}
+                          onClick={() => {
+                            likeClick(postId);
+                          }}
+                        />
+                      )}
+
+                      <FaRegComment style={{ marginRight: "15px" }} />
+                      <FaRegPaperPlane />
+                    </div>
+                    <div>
+                      <FaRegBookmark />
+                    </div>
+                  </Icondiv>
+                  <Textdiv>
+                    <span>좋아요 {v.likeCnt}개</span>
+                    <div>
+                      <span>{v.nickName}</span>
+                      <p>{v.content}</p>
+                    </div>
+                    <span>댓글 {v.commentCnt}개 모두 보기</span>
+                    <small>{displayedAt(startTime)}</small>
+                  </Textdiv>
+                  <Inputdiv>
+                    <div>
+                      <FaRegGrinBeam
+                        style={{ height: "20px", width: "20px" }}
+                      />
+                    </div>
+                    <div>
+                      <input placeholder="댓글 달기..."></input>
+                      <button>게시</button>
+                    </div>
+                  </Inputdiv>
+                </Post>
+              );
+            })}
+          </Scroll>
+        </PostContainer>
+        <SuggestContainer>
+          <Suggest></Suggest>
+        </SuggestContainer>
+      </Container>
+    );
+  } else {
+    return (
+      <Notlogindiv>
+        <span>로그인이 필요한 서비스입니다.</span>
+        <button
+          onClick={() => {
+            history.push("/");
+          }}
+        >
+          로그인 하러가기
+        </button>
+      </Notlogindiv>
+    );
+  }
 };
+const Notlogindiv = styled.div`
+  padding-top: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  span {
+    font-size: 22px;
+    font-weight: 550;
+  }
+  button {
+    background-color: #2e95f6;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-top: 10px;
+    color: white;
+    font-weight: 700;
+  }
+`;
 
 const Inputdiv = styled.div`
   display: flex;
@@ -193,12 +246,14 @@ const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  margin-top: 60px;
 `;
 const SuggestContainer = styled.div`
   width: 45%;
   height: 100vh;
   position: fixed;
   right: 10px;
+  margin-top: 60px;
 `;
 
 const Post = styled.div`
@@ -236,6 +291,7 @@ const Posttitle = styled.div`
 `;
 
 const Postimgdiv = styled.div`
+  margin-bottom: 20px;
   img {
     width: 100%;
   }
@@ -246,6 +302,6 @@ const Icondiv = styled.div`
   justify-content: space-between;
   font-size: 24px;
   padding: 3px 10px;
-  z-index: 9999;
+  z-index: 9998;
 `;
 export default Home;

@@ -7,6 +7,7 @@ import { RESP } from "../../response";
 //action
 const GETUSER = "GetUser";
 const LOGOUT = "Logout";
+const SETPREVIEW = "setPreview";
 
 //init
 const initialState = {
@@ -17,18 +18,12 @@ const initialState = {
 //action creators
 const getUser = createAction(GETUSER, (user) => ({ user }));
 const logOut = createAction(GETUSER, () => ({}));
+const setPreview = createAction(SETPREVIEW, (preview) => ({ preview }));
 
 //middleware
 const singUpDB = (userEmail, userName, nickName, password, profileImg) => {
   return async function (dispatch, getState, { history }) {
     try {
-      const formdata = new FormData();
-      formdata.append("file", profileImg);
-      const config = {
-        Headers: {
-          "content-type": "multipart/form-data",
-        },
-      };
       // const response = await axiosInstance.post(
       //   "/api/user/signup",
       //   {
@@ -36,9 +31,8 @@ const singUpDB = (userEmail, userName, nickName, password, profileImg) => {
       //     userName,
       //     nickName,
       //     password,
-      //     formdata,
-      //   },
-      //   config
+      //     profileImg,
+      //   }
       // );
       const response = RESP.USERSIGNUPPOST;
       if (response.status === 200) {
@@ -120,6 +114,10 @@ export default handleActions(
         draft.user = null;
         draft.is_login = false;
       }),
+    [SETPREVIEW]: (state, action) =>
+      produce(state, (draft) => {
+        draft.preview = action.payload.preview;
+      }),
   },
   initialState
 );
@@ -130,5 +128,6 @@ const actionCreators = {
   loginDB,
   userCheckDB,
   logOut,
+  setPreview,
 };
 export { actionCreators };

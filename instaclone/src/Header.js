@@ -77,6 +77,10 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-around;
+  position: fixed;
+  z-index: 9999;
+  background-color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   div {
     &:first-child {
       img {

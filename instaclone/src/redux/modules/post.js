@@ -6,26 +6,60 @@ import { RESP } from "../../response";
 //action
 const GETPOST = "getPost";
 const POSTLIKE = "postLike";
-
+const LOADING = "loading";
 //init
 const initialState = {
-  is_loading: false,
   list: [],
+  paging: { start: null, next: null },
+  is_loading: false,
 };
 
 //action creators
-const getPost = createAction(GETPOST, (post_list) => ({ post_list }));
+const getPost = createAction(GETPOST, (post_list, paging) => ({
+  post_list,
+  paging,
+}));
 const postLike = createAction(POSTLIKE, (post) => ({ post }));
+const loading = createAction(LOADING, (is_loading) => ({ is_loading }));
 //middlewares
-const getAllPostDB = (nickName) => {
+const getFirstPostDB = (nickName) => {
+  console.log("난 getFirstPostDB다", nickName);
   return async function (dispatch, getState, { history }) {
     try {
+      dispatch(loading(true));
       // const response = await axiosInstance.post("/api/posts", {
       //   nickName,
+      //   page: 1,
       // });
       const response = RESP.POSTSPOST;
+      let paging = {
+        start: 2,
+        next: 3,
+      };
+      dispatch(getPost(response, paging));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
+
+const getNextPostDB = (nickName, page) => {
+  console.log("난 getNextPostDB다", nickName, page);
+  return async function (dispatch, getState, { history }) {
+    try {
+      dispatch(loading(true));
+      // const response = await axiosInstance.post("/api/posts", {
+      //   nickName,
+      //   page,
+      // });
+      const response = RESP.POSTSPOST;
+      let paging = {
+        start: page + 1,
+        next: page + 2,
+      };
+      console.log(paging);
       if (response) {
-        dispatch(getPost(response));
+        dispatch(getPost(response, paging));
       }
     } catch (err) {
       console.log(err);
@@ -52,8 +86,9 @@ export default handleActions(
   {
     [GETPOST]: (state, action) =>
       produce(state, (draft) => {
-        draft.list = action.payload.post_list;
-        draft.is_loading = true;
+        draft.list.push(...action.payload.post_list);
+        draft.paging = action.payload.paging;
+        draft.is_loading = false;
       }),
     [POSTLIKE]: (state, action) =>
       produce(state, (draft) => {
@@ -74,13 +109,18 @@ export default handleActions(
           });
         }
       }),
+    [LOADING]: (state, action) =>
+      produce(state, (draft) => {
+        draft.is_loading = action.payload.is_loading;
+      }),
   },
   initialState
 );
 
 const actionCreators2 = {
   getPost,
-  getAllPostDB,
+  getFirstPostDB,
+  getNextPostDB,
   postLikeDB,
 };
 

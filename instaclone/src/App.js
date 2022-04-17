@@ -34,9 +34,6 @@ function App() {
             <Header />
             <Home />
           </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
         </Switch>
       </ConnectedRouter>
     </React.Fragment>

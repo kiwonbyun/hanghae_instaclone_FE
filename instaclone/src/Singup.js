@@ -3,7 +3,7 @@ import { FaFacebookSquare } from "react-icons/fa";
 import styled from "styled-components";
 import { Reset } from "styled-reset";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { actionCreators } from "./redux/modules/user";
 
 const Singup = () => {
@@ -15,15 +15,29 @@ const Singup = () => {
   const usernameref = useRef();
   const nicknameref = useRef();
   const passwordref = useRef();
-  let profileImg;
+  const preview = useSelector((state) => state.user?.preview);
+
+  const [files, setFiles] = useState("");
+
   const onImgChange = (e) => {
-    profileImg = e.target.files[0];
+    const file = e.target.files;
+    console.log(file[0]);
+    setFiles(file);
+
+    const reader = new FileReader();
+    const imgFile = file[0];
+    reader.readAsDataURL(imgFile);
+    reader.onloadend = () => {
+      dispatch(actionCreators.setPreview(reader.result));
+    };
   };
+
   const signupBtnClick = () => {
     const email = emailref.current.value;
     const username = usernameref.current.value;
     const nickname = nicknameref.current.value;
     const password = passwordref.current.value;
+
     if (email.match(emailRegExp) === null) {
       window.alert("이메일 형식을 확인해주세요");
       return;
@@ -40,8 +54,15 @@ const Singup = () => {
       window.alert("비밀번호는 4~16자리 입니다.");
       return;
     }
+    const formdata = new FormData();
+    formdata.append("uploadImage", files[0]);
+    // const config = {
+    //   Headers: {
+    //     "content-type": "multipart/form-data",
+    //   },
+    // };
     dispatch(
-      actionCreators.singUpDB(email, username, nickname, password, profileImg)
+      actionCreators.singUpDB(email, username, nickname, password, formdata)
     );
   };
   return (
@@ -66,6 +87,14 @@ const Singup = () => {
               placeholder="비밀번호(4~16자)"
               ref={passwordref}
             ></input>
+            <p>내 프로필 사진</p>
+            <img
+              src={
+                preview
+                  ? preview
+                  : "https://t1.daumcdn.net/cfile/tistory/2513B53E55DB206927"
+              }
+            ></img>
             <input type="file" accept="image/*" onChange={onImgChange}></input>
             <button onClick={signupBtnClick}>가입</button>
           </div>
@@ -157,6 +186,16 @@ const SignupDiv = styled.div`
         &:hover {
           background-color: #2e95f6;
         }
+      }
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-top: -10px;
+        margin-bottom: 5px;
+      }
+      p {
+        margin-top: -8px;
       }
     }
   }

@@ -53,6 +53,21 @@ export const RESP = {
       commentCnt: 499,
       clicked: false,
     },
+    {
+      postId: 3,
+      nickName: "IU",
+      profileImg:
+        "https://dimg.donga.com/wps/NEWS/IMAGE/2021/12/24/110942647.2.jpg",
+      contentImg: [
+        "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FdmPGDZ%2FbtrzvLOGlFd%2FGgk7O1IMUqcvbR4xwOBn9k%2Fimg.jpg",
+        "https://s3.ap-northeast-2.amazonaws.com/elasticbeanstalk-ap-northeast-2-176213403491/media/magazine_img/magazine_280/5-3-%EC%8D%B8%EB%84%A4%EC%9D%BC.jpg",
+      ],
+      content: "아이유네 강아지 있을까?",
+      createAt: "2022-04-12 10:39:20",
+      likeCnt: 3488,
+      commentCnt: 499,
+      clicked: false,
+    },
   ],
   POSTPOSTIDGET: {
     postId: 2,
