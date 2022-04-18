@@ -14,6 +14,8 @@ const POSTPREVIEW = "postPreview";
 const UPLOADPOST = "uploadPost";
 const GETDETAILPOST = "getDetailPost";
 const DELETEPOST = "deletePost";
+const EDITPOST = "editPost";
+const COMMENT_MAINTOPOST = "commentMainToPost";
 
 //init
 const initialState = {
@@ -38,6 +40,10 @@ const postPreview = createAction(POSTPREVIEW, (preview) => ({ preview }));
 const uploadPost = createAction(UPLOADPOST, () => ({}));
 const getDetailPost = createAction(GETDETAILPOST, (post) => ({ post }));
 const deletePost = createAction(DELETEPOST, () => ({}));
+const editPost = createAction(EDITPOST, (content) => ({ content }));
+const commentMaintoPost = createAction(COMMENT_MAINTOPOST, (comment) => ({
+  comment,
+}));
 
 //middlewares
 const getFirstPostDB = (nickName) => {
@@ -154,6 +160,23 @@ const deletePostDB = (postId) => {
     }
   };
 };
+const editPostDB = (postId, content) => {
+  return async function (dispatch, getState, { history }) {
+    try {
+      console.log(postId, content);
+      // const response = await axiosInstance.put(`/api/post/${postId}`, {
+      //   content,
+      // });
+      const response = RESP.POSTPOSTIDPUT;
+      if (response.status === 200) {
+        window.alert("게시물이 수정되었습니다.");
+        history.replace(`/detail/${postId}`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+};
 
 //reducer
 export default handleActions(
@@ -218,6 +241,14 @@ export default handleActions(
       produce(state, (draft) => {
         draft.detailPost = action.payload.post;
       }),
+    [COMMENT_MAINTOPOST]: (state, action) =>
+      produce(state, (draft) => {
+        draft.list.map((p) => {
+          if (p.postId === action.payload.comment.postId) {
+            p.commentCnt += 1;
+          }
+        });
+      }),
   },
   initialState
 );
@@ -233,6 +264,8 @@ const actionCreators2 = {
   getDetailPostDB,
   detailPostLikeDB,
   deletePostDB,
+  editPostDB,
+  commentMaintoPost,
 };
 
 export { actionCreators2 };

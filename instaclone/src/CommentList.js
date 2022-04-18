@@ -8,9 +8,15 @@ const CommentList = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const comment_list = useSelector((state) => state.comment.list);
+  const login_user = useSelector((state) => state.user.user);
+  const commentDeleteClick = (commentId) => {
+    dispatch(actionCreators3.deleteCommentDB(commentId, props.postId));
+  };
+
   React.useEffect(() => {
     dispatch(actionCreators3.getCommentDB(props.postId));
   }, []);
+
   return (
     <div>
       <Exitimg
@@ -20,11 +26,23 @@ const CommentList = (props) => {
         }}
       ></Exitimg>
       {comment_list.map((c) => {
+        const commentId = c.commentId;
         return (
           <Commentdiv key={c.commentId}>
-            <img src={c.profileImg}></img>
-            <span>{c.nickName}</span>
-            <p>{c.comment}</p>
+            <div>
+              <img src={c.profileImg}></img>
+              <span>{c.nickName}</span>
+              <p>{c.comment}</p>
+            </div>
+            {c.nickName === login_user.nickName ? (
+              <button
+                onClick={() => {
+                  commentDeleteClick(commentId);
+                }}
+              >
+                삭제
+              </button>
+            ) : null}
           </Commentdiv>
         );
       })}
@@ -36,14 +54,28 @@ const Commentdiv = styled.div`
   align-items: center;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding: 5px 8px;
-  img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
+  justify-content: space-between;
+  div {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    span {
+      margin-right: 8px;
+      font-weight: 600;
+    }
   }
-  span {
-    margin-left: 5px;
-    margin-right: 8px;
+  button {
+    width: 38px;
+    font-size: 12px;
+    background-color: white;
+    border: none;
+    color: tomato;
     font-weight: 600;
   }
 `;

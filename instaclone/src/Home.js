@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Suggest from "./Suggest";
 import { useHistory } from "react-router-dom";
@@ -11,11 +11,10 @@ import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa";
 import { FaRegGrinBeam } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { actionCreators } from "./redux/modules/user";
+import { actionCreators3 } from "./redux/modules/comment";
 import { actionCreators2 } from "./redux/modules/post";
 import SimpleSlider from "./Slider";
 import Scroll from "./shared/Scroll";
-import Detail from "./Detail";
 
 const Home = () => {
   const history = useHistory();
@@ -25,6 +24,14 @@ const Home = () => {
   const post_list = useSelector((state) => state.post?.list);
   const is_loading = useSelector((state) => state.post?.is_loading);
   const paging = useSelector((state) => state.post.paging);
+  const [inputValue, setInputValue] = useState("");
+  const commentBtnClick = (postId) => {
+    dispatch(actionCreators3.MaddCommentDB(postId, inputValue));
+    setInputValue("");
+  };
+  const onchangeInput = (e) => {
+    setInputValue(e.target.value);
+  };
 
   function displayedAt(createdAt) {
     const milliSeconds = new Date() - createdAt;
@@ -54,7 +61,6 @@ const Home = () => {
   }, [login_user]);
 
   if (is_login && paging.start !== null) {
-    console.log(login_user.nickName, paging.start);
     return (
       <Container>
         <PostContainer>
@@ -134,8 +140,15 @@ const Home = () => {
                       />
                     </div>
                     <div>
-                      <input placeholder="댓글 달기..."></input>
-                      <button>게시</button>
+                      <input
+                        placeholder="댓글 달기..."
+                        type="text"
+                        onChange={onchangeInput}
+                        value={inputValue}
+                      ></input>
+                      <button onClick={() => commentBtnClick(postId)}>
+                        게시
+                      </button>
                     </div>
                   </Inputdiv>
                 </Post>

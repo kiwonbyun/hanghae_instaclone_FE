@@ -11,6 +11,7 @@ import Detail from "./Detail";
 import { useDispatch } from "react-redux";
 import { actionCreators } from "./redux/modules/user";
 import Upload from "./Upload";
+import EditPost from "./EditPost";
 
 function App() {
   const dispatch = useDispatch();
@@ -41,6 +42,9 @@ function App() {
           </Route>
           <Route path="/detail/:id">
             <Detail />
+          </Route>
+          <Route path="/edit/:id">
+            <EditPost />
           </Route>
         </Switch>
       </ConnectedRouter>

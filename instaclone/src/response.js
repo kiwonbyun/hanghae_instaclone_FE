@@ -104,7 +104,14 @@ export const RESP = {
       profileImg:
         "https://yt3.ggpht.com/ytc/AKedOLQnoQzbgg4cE_7AhlpOoZq4UD9bfXSWgnFhpsFC=s900-c-k-c0x00ffffff-no-rj",
       nickName: "quanhaha79",
-      comment: "안녕하세요 저는 하하입니다.",
+      comment:
+        "안녕하세요 저는 하하입니다.안녕하세요 저는 하하입니다.안녕하세요 저는 하하입니다.안녕하세요 저는 하하입니다.",
+    },
+    {
+      commentId: 3,
+      profileImg: "https://avatars.githubusercontent.com/u/91737252?v=4",
+      nickName: "Flow",
+      comment: "이 댓글은 삭제되어야만 합니다",
     },
   ],
 };

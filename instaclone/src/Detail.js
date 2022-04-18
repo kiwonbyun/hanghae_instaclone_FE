@@ -1,5 +1,5 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { FaHeart } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
@@ -7,16 +7,26 @@ import { FaRegComment } from "react-icons/fa";
 import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { actionCreators } from "./redux/modules/user";
 import post, { actionCreators2 } from "./redux/modules/post";
 import DetailSlider from "./DetailSlider";
 import CommentList from "./CommentList";
+import { actionCreators3 } from "./redux/modules/comment";
 const Detail = () => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const params = useParams();
   const postId = parseInt(params.id);
   const detail_post = useSelector((state) => state.post.detailPost);
   const login_user = useSelector((state) => state.user.user);
-
+  const [inputValue, setInputValue] = useState("");
+  const inputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+  const commentBtnClick = () => {
+    dispatch(actionCreators3.addCommentDB(postId, inputValue));
+    setInputValue("");
+  };
   const deletePost = () => {
     dispatch(actionCreators2.deletePostDB(postId));
   };
@@ -26,6 +36,7 @@ const Detail = () => {
   };
 
   React.useEffect(() => {
+    dispatch(actionCreators.userCheckDB());
     dispatch(actionCreators2.getDetailPostDB(postId));
   }, []);
   if (detail_post) {
@@ -42,7 +53,16 @@ const Detail = () => {
               <span>·</span>
               <Followspan>Follow</Followspan>
               {login_user.nickName === detail_post.nickName ? (
-                <p onClick={deletePost}>Delete</p>
+                <>
+                  <p
+                    onClick={() => {
+                      history.push(`/edit/${detail_post.postId}`);
+                    }}
+                  >
+                    Edit
+                  </p>
+                  <p onClick={deletePost}>Delete</p>
+                </>
               ) : null}
             </Headdiv>
             <Contentdiv>
@@ -83,8 +103,13 @@ const Detail = () => {
               <small>{detail_post.createAt}</small>
             </Infodiv>
             <Inputdiv>
-              <input type="text" placeholder="댓글 달기.."></input>
-              <button>Post</button>
+              <input
+                type="text"
+                placeholder="댓글 달기.."
+                onChange={inputChange}
+                value={inputValue}
+              ></input>
+              <button onClick={commentBtnClick}>Post</button>
             </Inputdiv>
           </Rightdiv>
         </Whitediv>
