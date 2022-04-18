@@ -11,6 +11,7 @@ import { FaRegPaperPlane } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa";
 import { FaRegGrinBeam } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { actionCreators } from "./redux/modules/user";
 import { actionCreators3 } from "./redux/modules/comment";
 import { actionCreators2 } from "./redux/modules/post";
 import SimpleSlider from "./Slider";
@@ -24,6 +25,7 @@ const Home = () => {
   const post_list = useSelector((state) => state.post?.list);
   const is_loading = useSelector((state) => state.post?.is_loading);
   const paging = useSelector((state) => state.post.paging);
+  const lastPage = useSelector((state) => state.post.paging.lastPage);
   const [inputValue, setInputValue] = useState("");
   const commentBtnClick = (postId) => {
     dispatch(actionCreators3.MaddCommentDB(postId, inputValue));
@@ -71,7 +73,7 @@ const Home = () => {
               );
               // console.log(login_user?.nickName, paging?.start);
             }}
-            is_next={paging.next}
+            is_next={lastPage ? false : true}
             loading={is_loading}
           >
             {post_list?.map((v) => {
@@ -129,7 +131,7 @@ const Home = () => {
                       }}
                       style={{ cursor: "pointer" }}
                     >
-                      댓글 {v.commentCnt}개 모두 보기
+                      댓글 {v.commnetCnt}개 모두 보기
                     </span>
                     <small>{displayedAt(startTime)}</small>
                   </Textdiv>

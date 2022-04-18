@@ -22,6 +22,7 @@ const Header = () => {
   const logoutBtnClick = () => {
     sessionStorage.removeItem("token");
     dispatch(actionCreators.logOut());
+    history.push("/");
   };
 
   if (login_user === undefined) {

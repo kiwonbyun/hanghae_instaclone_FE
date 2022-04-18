@@ -16,10 +16,10 @@ import EditPost from "./EditPost";
 function App() {
   const dispatch = useDispatch();
   const is_session = sessionStorage.getItem("token") ? true : false;
-
+  const token = sessionStorage.getItem("token");
   React.useEffect(() => {
     if (is_session) {
-      dispatch(actionCreators.userCheckDB());
+      dispatch(actionCreators.loginCheck(token));
     }
   }, []);
 

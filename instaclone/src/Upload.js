@@ -14,6 +14,7 @@ const Upload = () => {
   const contentref = useRef();
   const post_preview = useSelector((state) => state.post.preview);
   const login_user = useSelector((state) => state.user.user);
+  const token = sessionStorage.getItem("token");
   const [showImages, setShowimages] = useState([]);
   const [files, setFiles] = useState();
   const inputBtnClick = (e) => {
@@ -24,6 +25,7 @@ const Upload = () => {
     const imageLists = e.target.files;
     setFiles(imageLists);
     let imageUrlLists = [...showImages];
+
     for (let i = 0; i < imageLists.length; i++) {
       const currentImageUrl = URL.createObjectURL(imageLists[i]);
       imageUrlLists.push(currentImageUrl);
@@ -48,10 +50,17 @@ const Upload = () => {
     }
 
     const formdata = new FormData();
-    formdata.append("uploadImage", files[0]);
-    formdata.append("uploadImage", files[1]);
-    formdata.append("uploadImage", files[2]);
-    dispatch(actionCreators2.uploadPostDB(formdata, content));
+    formdata.append("contentImg", files[0]);
+    formdata.append("contentImg", files[1]);
+    formdata.append("contentImg", files[2]);
+    formdata.append("content", content);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    dispatch(actionCreators2.uploadPostDB(formdata, config));
   };
 
   if (!post_preview) {

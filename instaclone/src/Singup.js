@@ -17,11 +17,12 @@ const Singup = () => {
   const passwordref = useRef();
   const preview = useSelector((state) => state.user?.preview);
 
-  const [files, setFiles] = useState("");
-
+  const [files, setFiles] = useState([
+    new File([], "", { type: "text/plane" }),
+  ]);
+  console.log(files);
   const onImgChange = (e) => {
     const file = e.target.files;
-    console.log(file[0]);
     setFiles(file);
 
     const reader = new FileReader();
@@ -54,16 +55,19 @@ const Singup = () => {
       window.alert("비밀번호는 4~16자리 입니다.");
       return;
     }
+
     const formdata = new FormData();
-    formdata.append("uploadImage", files[0]);
-    // const config = {
-    //   Headers: {
-    //     "content-type": "multipart/form-data",
-    //   },
-    // };
-    dispatch(
-      actionCreators.singUpDB(email, username, nickname, password, formdata)
-    );
+    formdata.append("profileImg", files[0]);
+    formdata.append("userEmail", email);
+    formdata.append("userName", username);
+    formdata.append("nickName", nickname);
+    formdata.append("password", password);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+    dispatch(actionCreators.singUpDB(formdata, config));
   };
   return (
     <div style={{ backgroundColor: "#ffffff" }}>

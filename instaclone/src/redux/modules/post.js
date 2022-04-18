@@ -20,7 +20,7 @@ const COMMENT_MAINTOPOST = "commentMainToPost";
 //init
 const initialState = {
   list: [],
-  paging: { start: null, next: null },
+  paging: { start: null, next: null, lastPage: false },
   is_loading: false,
 };
 
@@ -51,16 +51,19 @@ const getFirstPostDB = (nickName) => {
   return async function (dispatch, getState, { history }) {
     try {
       dispatch(loading(true));
-      // const response = await axiosInstance.post("/api/posts", {
-      //   nickName,
-      //   page: 1,
-      // });
-      const response = RESP.POSTSPOST;
+      const response = await axiosInstance.post("/api/posts", {
+        nickName,
+        page: 1,
+      });
+      // const response = RESP.POSTSPOST;
       let paging = {
         start: 2,
         next: 3,
+        lastPage: response.data.last,
       };
-      dispatch(getFirstPost(response, paging));
+      if (response.status === 200) {
+        dispatch(getFirstPost(response.data.content, paging));
+      }
     } catch (err) {
       console.log(err);
     }
@@ -72,18 +75,20 @@ const getNextPostDB = (nickName, page) => {
   return async function (dispatch, getState, { history }) {
     try {
       dispatch(loading(true));
-      // const response = await axiosInstance.post("/api/posts", {
-      //   nickName,
-      //   page,
-      // });
-      const response = RESP.POSTSPOST;
+      const response = await axiosInstance.post("/api/posts", {
+        nickName,
+        page,
+      });
+      // const response = RESP.POSTSPOST;
+      console.log(response);
       let paging = {
         start: page + 1,
         next: page + 2,
+        lastPage: response.data.last,
       };
-      console.log(paging);
-      if (response) {
-        dispatch(getNextPost(response, paging));
+
+      if (response.status === 200) {
+        dispatch(getNextPost(response.data.content, paging));
       }
     } catch (err) {
       console.log(err);
@@ -93,13 +98,13 @@ const getNextPostDB = (nickName, page) => {
 const postLikeDB = (postId) => {
   return async function (dispatch, getState, { history }) {
     console.log("난 postLikeDB야");
-    // const response = await axiosInstance.post(`/api/likes/${postId}`);
-    const response = RESP.LIKEPOSTIDPOST;
+    const response = await axiosInstance.post(`/api/likes/${postId}`);
+    // const response = RESP.LIKEPOSTIDPOST;
     if (response.status === 200) {
       dispatch(
         postLike({
           postId,
-          clicked: response.clicked,
+          clicked: response.data.clicked,
         })
       );
     }
@@ -107,19 +112,24 @@ const postLikeDB = (postId) => {
 };
 const detailPostLikeDB = (postId) => {
   return async function (dispatch, getState, { history }) {
-    // const response = await axiosInstance.post(`/api/likes/${postId}`);
-    const response = RESP.LIKEPOSTIDPOST;
-    dispatch(detailPostLike(response.clicked));
+    const response = await axiosInstance.post(`/api/likes/${postId}`);
+    // const response = RESP.LIKEPOSTIDPOST;
+    console.log(response);
+    dispatch(detailPostLike(response.data.clicked));
   };
 };
-const uploadPostDB = (contentImg, content) => {
+const uploadPostDB = (formdata, config) => {
   return async function (dispatch, getState, { history }) {
     try {
-      // const response = await axiosInstance.post("/api/post", {
-      //   contentImg,
-      //   content,
-      // });
-      const response = RESP.POSTPOST;
+      const response = await axiosInstance.post(
+        "/api/post",
+        {
+          formdata,
+        },
+        config
+      );
+      console.log(response);
+      // const response = RESP.POSTPOST;
       if (response.status === 200) {
         window.alert("게시물이 작성되었습니다.");
         dispatch(uploadPost());
@@ -135,12 +145,13 @@ const getDetailPostDB = (postId) => {
     const user = getState().user.user;
     console.log(user);
     try {
-      // const response = await axiosInstance.post("/api/post/detail", {
-      //   postId,
-      //   nickName: user.nickName,
-      // });
-      const response = RESP.POSTDETAILPOST;
-      dispatch(getDetailPost(response));
+      const response = await axiosInstance.post("/api/post/detail", {
+        postId,
+        nickName: user.nickName,
+      });
+      console.log(response);
+      // const response = RESP.POSTDETAILPOST;
+      dispatch(getDetailPost(response.data));
     } catch (err) {
       console.log(err);
     }
@@ -149,8 +160,8 @@ const getDetailPostDB = (postId) => {
 const deletePostDB = (postId) => {
   return async function (dispatch, getState, { history }) {
     try {
-      // const response = await axiosInstance.delete(`/api/post/${postId}`);
-      const response = RESP.POSTPOSTIDDELETE;
+      const response = await axiosInstance.delete(`/api/post/${postId}`);
+      // const response = RESP.POSTPOSTIDDELETE;
       if (response.status === 200) {
         window.alert("게시물이 삭제되었습니다.");
         history.replace("/home");
@@ -164,10 +175,10 @@ const editPostDB = (postId, content) => {
   return async function (dispatch, getState, { history }) {
     try {
       console.log(postId, content);
-      // const response = await axiosInstance.put(`/api/post/${postId}`, {
-      //   content,
-      // });
-      const response = RESP.POSTPOSTIDPUT;
+      const response = await axiosInstance.put(`/api/post/${postId}`, {
+        content,
+      });
+      // const response = RESP.POSTPOSTIDPUT;
       if (response.status === 200) {
         window.alert("게시물이 수정되었습니다.");
         history.replace(`/detail/${postId}`);
@@ -244,8 +255,9 @@ export default handleActions(
     [COMMENT_MAINTOPOST]: (state, action) =>
       produce(state, (draft) => {
         draft.list.map((p) => {
+          console.log(p.postId, action.payload.comment.postId);
           if (p.postId === action.payload.comment.postId) {
-            p.commentCnt += 1;
+            p.commnetCnt += 1;
           }
         });
       }),

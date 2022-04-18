@@ -19,6 +19,7 @@ const Detail = () => {
   const postId = parseInt(params.id);
   const detail_post = useSelector((state) => state.post.detailPost);
   const login_user = useSelector((state) => state.user.user);
+  const token = sessionStorage.getItem("token");
   const [inputValue, setInputValue] = useState("");
   const inputChange = (e) => {
     setInputValue(e.target.value);
@@ -36,7 +37,7 @@ const Detail = () => {
   };
 
   React.useEffect(() => {
-    dispatch(actionCreators.userCheckDB());
+    dispatch(actionCreators.loginCheck(token));
     dispatch(actionCreators2.getDetailPostDB(postId));
   }, []);
   if (detail_post) {
