@@ -71,7 +71,6 @@ const Home = () => {
               dispatch(
                 actionCreators2.getNextPostDB(login_user.nickName, paging.start)
               );
-              // console.log(login_user?.nickName, paging?.start);
             }}
             is_next={lastPage ? false : true}
             loading={is_loading}
@@ -280,7 +279,7 @@ const SuggestContainer = styled.div`
 `;
 
 const Post = styled.div`
-  width: 80%;
+  width: 75%;
   display: flex;
   flex-direction: column;
   border: 1px solid rgba(0, 0, 0, 0.1);

@@ -20,7 +20,7 @@ const Singup = () => {
   const [files, setFiles] = useState([
     new File([], "", { type: "text/plane" }),
   ]);
-  console.log(files);
+
   const onImgChange = (e) => {
     const file = e.target.files;
     setFiles(file);
@@ -55,7 +55,7 @@ const Singup = () => {
       window.alert("비밀번호는 4~16자리 입니다.");
       return;
     }
-
+    console.log(files[0]);
     const formdata = new FormData();
     formdata.append("profileImg", files[0]);
     formdata.append("userEmail", email);

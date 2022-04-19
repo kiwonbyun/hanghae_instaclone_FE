@@ -152,6 +152,9 @@ const Inputdiv = styled.div`
     font-size: 16px;
     border: none;
     padding-left: 8px;
+    &:focus {
+      outline: none;
+    }
   }
   button {
     background-color: white;

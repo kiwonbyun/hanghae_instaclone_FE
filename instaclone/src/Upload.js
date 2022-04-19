@@ -14,7 +14,7 @@ const Upload = () => {
   const contentref = useRef();
   const post_preview = useSelector((state) => state.post.preview);
   const login_user = useSelector((state) => state.user.user);
-  const token = sessionStorage.getItem("token");
+
   const [showImages, setShowimages] = useState([]);
   const [files, setFiles] = useState();
   const inputBtnClick = (e) => {

@@ -55,7 +55,6 @@ const getFirstPostDB = (nickName) => {
         nickName,
         page: 1,
       });
-      // const response = RESP.POSTSPOST;
       let paging = {
         start: 2,
         next: 3,
@@ -71,7 +70,6 @@ const getFirstPostDB = (nickName) => {
 };
 
 const getNextPostDB = (nickName, page) => {
-  console.log("난 getNextPostDB다", nickName, page);
   return async function (dispatch, getState, { history }) {
     try {
       dispatch(loading(true));
@@ -100,6 +98,7 @@ const postLikeDB = (postId) => {
     console.log("난 postLikeDB야");
     const response = await axiosInstance.post(`/api/likes/${postId}`);
     // const response = RESP.LIKEPOSTIDPOST;
+    console.log(response);
     if (response.status === 200) {
       dispatch(
         postLike({
@@ -121,16 +120,10 @@ const detailPostLikeDB = (postId) => {
 const uploadPostDB = (formdata, config) => {
   return async function (dispatch, getState, { history }) {
     try {
-      const response = await axiosInstance.post(
-        "/api/post",
-        {
-          formdata,
-        },
-        config
-      );
+      const response = await axiosInstance.post("/api/post", formdata, config);
       console.log(response);
       // const response = RESP.POSTPOST;
-      if (response.status === 200) {
+      if (response.data.status === 200) {
         window.alert("게시물이 작성되었습니다.");
         dispatch(uploadPost());
         history.replace("/home");

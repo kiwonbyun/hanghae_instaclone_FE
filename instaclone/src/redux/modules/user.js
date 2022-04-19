@@ -36,8 +36,8 @@ const singUpDB = (formdata, config) => {
       if (response.data.status === 200) {
         window.alert("회원가입 완료, 로그인 해주세요");
         history.push("/");
-      } else if (response.status === 400) {
-        window.alert(response.msg);
+      } else if (response.data.status === 400) {
+        window.alert(response.data.msg);
         return;
       }
     } catch (err) {
@@ -55,7 +55,7 @@ const loginDB = (userEmail, password) => {
       });
       console.log(response);
       // const response = RESP.USERLOGINPOST;
-      if (response.status === 200) {
+      if (response.data.status === 200) {
         const accessToken = response.headers.authorization;
         let decoded = jwt_decode(accessToken);
         sessionStorage.setItem("token", accessToken);
@@ -72,6 +72,8 @@ const loginDB = (userEmail, password) => {
         );
         window.alert("로그인 성공! 환영합니다.");
         history.replace("/home");
+      } else if (response.data.status === 400) {
+        window.alert(response.data.msg);
       }
     } catch (err) {
       console.log(err);

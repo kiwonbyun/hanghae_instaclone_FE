@@ -31,7 +31,7 @@ const StyledSlider = styled(Slider)`
   .slick-list {
     //얘로 크기조정 했음
     width: 100%;
-    height: 400px;
+    height: 480px;
     margin: 0 auto;
   }
   .slick-prev:before {
