@@ -25,7 +25,9 @@ const Home = () => {
   const post_list = useSelector((state) => state.post?.list);
   const is_loading = useSelector((state) => state.post?.is_loading);
   const paging = useSelector((state) => state.post.paging);
+  const token = sessionStorage.getItem("token");
   const lastPage = useSelector((state) => state.post.paging.lastPage);
+
   const [inputValue, setInputValue] = useState("");
   const commentBtnClick = (postId) => {
     dispatch(actionCreators3.MaddCommentDB(postId, inputValue));
@@ -61,7 +63,7 @@ const Home = () => {
       dispatch(actionCreators2.getFirstPostDB(login_user?.nickName));
     }
   }, [login_user]);
-
+  console.log(token);
   if (is_login && paging.start !== null) {
     return (
       <Container>

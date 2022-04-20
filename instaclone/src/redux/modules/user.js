@@ -59,7 +59,7 @@ const loginDB = (userEmail, password) => {
         const accessToken = response.headers.authorization;
         let decoded = jwt_decode(accessToken);
         sessionStorage.setItem("token", accessToken);
-        console.log(decoded);
+
         dispatch(
           getUser({
             userName: decoded.USER_NAME,
@@ -71,7 +71,8 @@ const loginDB = (userEmail, password) => {
           })
         );
         window.alert("로그인 성공! 환영합니다.");
-        history.replace("/home");
+        // history.replace("/home");
+        window.location.replace("/home");
       } else if (response.data.status === 400) {
         window.alert(response.data.msg);
       }
