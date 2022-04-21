@@ -47,7 +47,6 @@ const commentMaintoPost = createAction(COMMENT_MAINTOPOST, (comment) => ({
 
 //middlewares
 const getFirstPostDB = (nickName) => {
-  console.log("난 getFirstPostDB다", nickName);
   return async function (dispatch, getState, { history }) {
     try {
       dispatch(loading(true));
@@ -78,7 +77,6 @@ const getNextPostDB = (nickName, page) => {
         page,
       });
       // const response = RESP.POSTSPOST;
-      console.log(response);
       let paging = {
         start: page + 1,
         next: page + 2,
@@ -95,10 +93,8 @@ const getNextPostDB = (nickName, page) => {
 };
 const postLikeDB = (postId) => {
   return async function (dispatch, getState, { history }) {
-    console.log("난 postLikeDB야");
     const response = await axiosInstance.post(`/api/likes/${postId}`);
     // const response = RESP.LIKEPOSTIDPOST;
-    console.log(response);
     if (response.status === 200) {
       dispatch(
         postLike({
@@ -113,7 +109,6 @@ const detailPostLikeDB = (postId) => {
   return async function (dispatch, getState, { history }) {
     const response = await axiosInstance.post(`/api/likes/${postId}`);
     // const response = RESP.LIKEPOSTIDPOST;
-    console.log(response);
     dispatch(detailPostLike(response.data.clicked));
   };
 };
@@ -121,7 +116,6 @@ const uploadPostDB = (formdata, config) => {
   return async function (dispatch, getState, { history }) {
     try {
       const response = await axiosInstance.post("/api/post", formdata, config);
-      console.log(response);
       // const response = RESP.POSTPOST;
       if (response.data.status === 200) {
         window.alert("게시물이 작성되었습니다.");
@@ -136,13 +130,11 @@ const uploadPostDB = (formdata, config) => {
 const getDetailPostDB = (postId) => {
   return async function (dispatch, getState, { history }) {
     const user = getState().user.user;
-    console.log(user);
     try {
       const response = await axiosInstance.post("/api/post/detail", {
         postId,
         nickName: user.nickName,
       });
-      console.log(response);
       // const response = RESP.POSTDETAILPOST;
       dispatch(getDetailPost(response.data));
     } catch (err) {
@@ -167,7 +159,6 @@ const deletePostDB = (postId) => {
 const editPostDB = (postId, content) => {
   return async function (dispatch, getState, { history }) {
     try {
-      console.log(postId, content);
       const response = await axiosInstance.put(`/api/post/${postId}`, {
         content,
       });
@@ -201,7 +192,6 @@ export default handleActions(
       }),
     [DETAILPOSTLIKE]: (state, action) =>
       produce(state, (draft) => {
-        console.log(action.payload.clicked);
         if (action.payload.clicked) {
           draft.detailPost.likeCnt += 1;
           draft.detailPost.clicked = true;
@@ -212,7 +202,6 @@ export default handleActions(
       }),
     [POSTLIKE]: (state, action) =>
       produce(state, (draft) => {
-        console.log(action.payload.post);
         if (action.payload.post.clicked === true) {
           draft.list.map((post) => {
             if (post.postId === action.payload.post.postId) {
@@ -248,7 +237,6 @@ export default handleActions(
     [COMMENT_MAINTOPOST]: (state, action) =>
       produce(state, (draft) => {
         draft.list.map((p) => {
-          console.log(p.postId, action.payload.comment.postId);
           if (p.postId === action.payload.comment.postId) {
             p.commnetCnt += 1;
           }

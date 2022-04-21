@@ -16,6 +16,7 @@ import { actionCreators3 } from "./redux/modules/comment";
 import { actionCreators2 } from "./redux/modules/post";
 import SimpleSlider from "./Slider";
 import Scroll from "./shared/Scroll";
+import { chatActions } from "./redux/modules/chat";
 
 const Home = () => {
   const history = useHistory();
@@ -29,10 +30,12 @@ const Home = () => {
   const lastPage = useSelector((state) => state.post.paging.lastPage);
 
   const [inputValue, setInputValue] = useState("");
+
   const commentBtnClick = (postId) => {
     dispatch(actionCreators3.MaddCommentDB(postId, inputValue));
     setInputValue("");
   };
+
   const onchangeInput = (e) => {
     setInputValue(e.target.value);
   };
@@ -58,12 +61,19 @@ const Home = () => {
     dispatch(actionCreators2.postLikeDB(postId));
   };
 
+  const [open, setOpen] = useState(false);
+  console.log(open);
   useEffect(() => {
     if (login_user) {
       dispatch(actionCreators2.getFirstPostDB(login_user?.nickName));
     }
   }, [login_user]);
-  console.log(token);
+
+  const roomCreate = (nickName) => {
+    dispatch(chatActions.addChatRoomDB(nickName));
+    setOpen(false);
+  };
+  console.log(post_list);
   if (is_login && paging.start !== null) {
     return (
       <Container>
@@ -84,7 +94,21 @@ const Home = () => {
                 <Post key={v.postId}>
                   <Posttitle>
                     <div>
-                      <img src={v.profileImg}></img>
+                      <img
+                        src={v.profileImg}
+                        onClick={() => setOpen((curr) => !curr)}
+                      ></img>
+                      {open ? (
+                        <div>
+                          <button
+                            onClick={() => {
+                              roomCreate(v.nickName);
+                            }}
+                          >
+                            DM하기
+                          </button>
+                        </div>
+                      ) : null}
                       <div>
                         <span>{v.nickName}</span>
                         <small>Seoul, South Korea</small>

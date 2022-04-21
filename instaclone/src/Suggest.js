@@ -27,7 +27,7 @@ const Suggest = () => {
         <div>
           <div>
             <SuggestUserdiv>
-              <img src="https://yt3.ggpht.com/ytc/AKedOLQnoQzbgg4cE_7AhlpOoZq4UD9bfXSWgnFhpsFC=s900-c-k-c0x00ffffff-no-rj"></img>
+              <img src="https://w.namu.la/s/cf79b4e7165c74d5103259182d01ad29f29f62a9dd7537e6ab0244543dcb2d01e0567514ee7539d814017013a527605966b1716684b6c4ac72689d3b956b2c10dce81cff4ce1facddc57e5fd1f315dd67460d4137417c2dd8c80f6aab4bcd55d"></img>
               <div>
                 <span>quanhaha79</span>
                 <span>ha dong hoon</span>

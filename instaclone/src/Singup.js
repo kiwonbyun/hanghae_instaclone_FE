@@ -55,7 +55,6 @@ const Singup = () => {
       window.alert("비밀번호는 4~16자리 입니다.");
       return;
     }
-    console.log(files[0]);
     const formdata = new FormData();
     formdata.append("profileImg", files[0]);
     formdata.append("userEmail", email);

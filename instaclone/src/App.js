@@ -12,6 +12,8 @@ import { useDispatch } from "react-redux";
 import { actionCreators } from "./redux/modules/user";
 import Upload from "./Upload";
 import EditPost from "./EditPost";
+import ChattingList from "./ChattingList";
+import ChattingRoom from "./ChattingRoom";
 
 function App() {
   const dispatch = useDispatch();
@@ -45,6 +47,12 @@ function App() {
           </Route>
           <Route path="/edit/:id">
             <EditPost />
+          </Route>
+          <Route path="/chatrooms">
+            <ChattingList />
+          </Route>
+          <Route path="/chat/:roomId" exact>
+            <ChattingRoom />
           </Route>
         </Switch>
       </ConnectedRouter>

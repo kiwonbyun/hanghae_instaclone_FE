@@ -26,7 +26,6 @@ const getCommentDB = (postId) => {
     try {
       const response = await axiosInstance.get(`/api/comment/${postId}`);
       // const response = RESP.COMMENTPOSTIDGET;
-      console.log(response);
       dispatch(getComment(response.data));
     } catch (err) {
       console.log(err);
@@ -35,14 +34,11 @@ const getCommentDB = (postId) => {
 };
 const MaddCommentDB = (postId, comment) => {
   return async function (dispatch, getState, { history }) {
-    console.log(postId, comment);
     try {
       const response = await axiosInstance.post(`/api/comment/${postId}`, {
         comment,
       });
       // const response = RESP.COMMENTPOSTIDPOST;
-      console.log(response);
-
       if (response.status === 200) {
         dispatch(actionCreators2.commentMaintoPost({ postId, comment }));
       }

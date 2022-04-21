@@ -31,8 +31,8 @@ const singUpDB = (formdata, config) => {
         formdata,
         config
       );
-      console.log(response);
       // const response = RESP.USERSIGNUPPOST;
+      console.log(response);
       if (response.data.status === 200) {
         window.alert("회원가입 완료, 로그인 해주세요");
         history.push("/");
@@ -53,7 +53,6 @@ const loginDB = (userEmail, password) => {
         userEmail,
         password,
       });
-      console.log(response);
       // const response = RESP.USERLOGINPOST;
       if (response.data.status === 200) {
         const accessToken = response.headers.authorization;
@@ -87,7 +86,6 @@ const userCheckDB = () => {
     try {
       const response = await axiosInstance.get("/api/user/islogin");
       // const response = RESP.USERISLOGINGET;
-      console.log(response);
       if (response.status === 200) {
         dispatch(
           getUser({

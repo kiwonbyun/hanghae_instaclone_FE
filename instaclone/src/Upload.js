@@ -67,7 +67,7 @@ const Upload = () => {
     return (
       <Container>
         <Exitimg
-          src="https://cdn.icon-icons.com/icons2/1524/PNG/512/x_106506.png"
+          src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FDifVx%2FbtrzUzofqiL%2FrMgNUMS8ComKD8Yz2zEi11%2Fimg.png"
           onClick={() => {
             history.push("/home");
           }}
