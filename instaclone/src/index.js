@@ -4,6 +4,9 @@ import App from "./App";
 import "./index.css";
 import { Provider } from "react-redux";
 import store from "./redux/configStore";
+import ReactModal from "react-modal";
+
+ReactModal.setAppElement("#root");
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
